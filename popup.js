@@ -51,3 +51,13 @@ document.querySelector("form").addEventListener("submit", async (e) => {
     chatBox.scrollTop = chatBox.scrollHeight;
   }
 });
+
+document.getElementById("test").addEventListener("click", async()=>{
+  try {
+    const [tab] = await browser.tabs.query({ active: true, currentWindow: true });
+    const response = await browser.tabs.sendMessage(tab.id, { action: "getPageText" });
+    console.log("Page text:", response.text); // Later send to backend/Gemini
+  } catch (err) {
+    console.error("Error fetching page text:", err);
+  }
+})
