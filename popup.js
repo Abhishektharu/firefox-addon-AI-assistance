@@ -1,12 +1,22 @@
 let messages = []; // Conversation history
 let pageContext = ""; // Optional, filled from content.js
-
+  const input = document.getElementById("user-input");
+  const chatBox = document.getElementById("chat-box");
 // Attach event listener to the form instead of button
+
+// ✅ Prompt template buttons
+document.querySelectorAll(".template-btn").forEach(btn => {
+  btn.addEventListener("click", () => {
+    const basePrompt = btn.textContent;
+    // Prepend template to input, preserving existing text
+      input.value = `${basePrompt}: ${input.value}`.trim();
+      input.focus();
+  });
+});
 document.querySelector("form").addEventListener("submit", async (e) => {
   e.preventDefault();
 
-  const input = document.getElementById("user-input");
-  const chatBox = document.getElementById("chat-box");
+
 
   if (input.value.trim() === "") return;
 
@@ -32,7 +42,7 @@ document.querySelector("form").addEventListener("submit", async (e) => {
     const data = await res.json();
     const aiReply = data.reply || "No response";
 
-    addMessage("AI", aiReply);
+    addMessage("AI", aiReply, true);
 
     // Store AI reply in history
     messages.push({ role: "model", text: aiReply });
@@ -40,15 +50,23 @@ document.querySelector("form").addEventListener("submit", async (e) => {
     addMessage("Error", "⚠️ API error, try again.");
     console.error("Chat error:", error);
   }
-  loading.classList.add("hidden");    // after fetch
+  loading.classList.add("hidden"); // after fetch
 
   input.value = ""; // Clear input
 
   // ✅ Helper function
-  function addMessage(sender, text) {
+  function addMessage(sender, text, isAI = false) {
     const msg = document.createElement("div");
     msg.className = "message";
     msg.innerHTML = `<strong>${sender}:</strong> ${text}`;
+    if (isAI) {
+      const copyBtn = document.createElement("button");
+      copyBtn.textContent = "📋 copy ";
+      copyBtn.className = "copy-btn";
+      copyBtn.onclick = () => navigator.clipboard.writeText(text);
+      msg.appendChild(copyBtn);
+    }
+
     chatBox.appendChild(msg);
     chatBox.scrollTop = chatBox.scrollHeight;
   }
