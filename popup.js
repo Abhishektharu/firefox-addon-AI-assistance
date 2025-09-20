@@ -1,10 +1,10 @@
-let messages = [];      // Conversation history
-let pageContext = "";   // Optional, filled from content.js
+let messages = []; // Conversation history
+let pageContext = ""; // Optional, filled from content.js
 
 // Attach event listener to the form instead of button
 document.querySelector("form").addEventListener("submit", async (e) => {
   e.preventDefault();
-  
+
   const input = document.getElementById("user-input");
   const chatBox = document.getElementById("chat-box");
 
@@ -17,6 +17,7 @@ document.querySelector("form").addEventListener("submit", async (e) => {
   messages.push({ role: "user", text: userMessage });
 
   try {
+    loading.classList.remove("hidden"); // before fetch
     const res = await fetch("http://localhost:5000/api/gemini", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -26,6 +27,7 @@ document.querySelector("form").addEventListener("submit", async (e) => {
         context: pageContext,
       }),
     });
+    loading.classList.add("hidden"); // after fetch
 
     const data = await res.json();
     const aiReply = data.reply || "No response";
@@ -34,11 +36,11 @@ document.querySelector("form").addEventListener("submit", async (e) => {
 
     // Store AI reply in history
     messages.push({ role: "model", text: aiReply });
-
   } catch (error) {
     addMessage("Error", "⚠️ API error, try again.");
     console.error("Chat error:", error);
   }
+  loading.classList.add("hidden");    // after fetch
 
   input.value = ""; // Clear input
 
@@ -52,12 +54,33 @@ document.querySelector("form").addEventListener("submit", async (e) => {
   }
 });
 
-document.getElementById("test").addEventListener("click", async()=>{
+document.getElementById("test").addEventListener("click", async () => {
   try {
-    const [tab] = await browser.tabs.query({ active: true, currentWindow: true });
-    const response = await browser.tabs.sendMessage(tab.id, { action: "getPageText" });
+    loading.classList.remove("hidden"); // before fetch
+    const [tab] = await browser.tabs.query({
+      active: true,
+      currentWindow: true,
+    });
+    const response = await browser.tabs.sendMessage(tab.id, {
+      action: "getPageText",
+    });
     console.log("Page text:", response.text); // Later send to backend/Gemini
+
+    loading.classList.add("hidden"); // after fetch
   } catch (err) {
     console.error("Error fetching page text:", err);
   }
-})
+});
+
+document.addEventListener("DOMContentLoaded", async () => {
+  const data = await browser.storage.local.get("selectedText");
+  if (data.selectedText) {
+    console.log("From context menu:", data.selectedText);
+
+    // Optional: auto-fill input box
+    document.getElementById("user-input").value = data.selectedText;
+
+    // Clear after using
+    await browser.storage.local.remove("selectedText");
+  }
+});

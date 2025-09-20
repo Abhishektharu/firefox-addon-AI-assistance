@@ -20,7 +20,16 @@ body {
   overflow-y: auto;
   background: #f9f9f9;
   margin-bottom: 8px;
+  max-height: 250px;
+  scroll-behavior: smooth;
 }
+
+#loading {
+  text-align: center;
+  padding: 5px;
+  color: #4a90e2;
+}
+.hidden { display: none; }
 
 #user-input {
   width: 100%;
