@@ -72,23 +72,23 @@ document.querySelector("form").addEventListener("submit", async (e) => {
   }
 });
 
-document.getElementById("test").addEventListener("click", async () => {
-  try {
-    loading.classList.remove("hidden"); // before fetch
-    const [tab] = await browser.tabs.query({
-      active: true,
-      currentWindow: true,
-    });
-    const response = await browser.tabs.sendMessage(tab.id, {
-      action: "getPageText",
-    });
-    console.log("Page text:", response.text); // Later send to backend/Gemini
+// document.getElementById("test").addEventListener("click", async () => {
+//   try {
+//     loading.classList.remove("hidden"); // before fetch
+//     const [tab] = await browser.tabs.query({
+//       active: true,
+//       currentWindow: true,
+//     });
+//     const response = await browser.tabs.sendMessage(tab.id, {
+//       action: "getPageText",
+//     });
+//     console.log("Page text:", response.text); // Later send to backend/Gemini
 
-    loading.classList.add("hidden"); // after fetch
-  } catch (err) {
-    console.error("Error fetching page text:", err);
-  }
-});
+//     loading.classList.add("hidden"); // after fetch
+//   } catch (err) {
+//     console.error("Error fetching page text:", err);
+//   }
+// });
 
 document.addEventListener("DOMContentLoaded", async () => {
   const data = await browser.storage.local.get("selectedText");
