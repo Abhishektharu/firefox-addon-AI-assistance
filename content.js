@@ -1,6 +1,6 @@
 browser.runtime.onMessage.addListener((request, sender, sendResponse) => {
 
-  console.log("hello from content listener. ");
+  // console.log("hello from content listener. ");
 
   //sends all the text from webpage
   if(request.action === "getPageText"){

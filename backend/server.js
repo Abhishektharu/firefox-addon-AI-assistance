@@ -54,6 +54,27 @@ app.post("/api/gemini", async (req, res) => {
   }
 });
 
+
+app.post("/api/gemini/summarize", async (req, res) => {
+  try {
+    const { text } = req.body;   // text = full page text or selection
+    if (!text || text.trim().length === 0) {
+      return res.status(400).json({ error: "No text provided for summary." });
+    }
+
+    const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
+
+    const prompt = `Summarize the following text in a concise way:\n\n${text}`;
+    const result = await model.generateContent(prompt);
+
+    res.json({ summary: result.response.text() });
+  } catch (err) {
+    console.error("Gemini summarize error:", err);
+    res.status(500).json({ error: "Gemini summarize request failed" });
+  }
+});
+
+
 app.get("/hello", (req, res)=>{
 return res.status(200).json({message: "Hello world."})
 })

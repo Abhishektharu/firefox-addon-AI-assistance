@@ -3,10 +3,10 @@
   "name": "AI Assistant",
   "version": "1.0",
   "description": "Chat with AI",
-  "permissions": ["activeTab", "storage", "scripting", "contextMenus"],
+  "permissions": ["activeTab", "storage", "scripting", "contextMenus", "notifications"],
   "action": {
     "default_popup": "popup.html",
-    "default_icon": "icons/icon.png"
+    "default_icon": "icons/logo.png"
   },
   "content_scripts": [
     {
@@ -16,5 +16,11 @@
   ],
   "background": {
     "scripts": ["background.js"]
+  },
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "ai-assistant@assistant.com",
+      "strict_min_version": "109.0"
+    }
   }
 }

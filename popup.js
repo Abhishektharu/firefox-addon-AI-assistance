@@ -1,22 +1,21 @@
 let messages = []; // Conversation history
 let pageContext = ""; // Optional, filled from content.js
-  const input = document.getElementById("user-input");
-  const chatBox = document.getElementById("chat-box");
+const input = document.getElementById("user-input");
+const chatBox = document.getElementById("chat-box");
 // Attach event listener to the form instead of button
 
 // ✅ Prompt template buttons
-document.querySelectorAll(".template-btn").forEach(btn => {
+document.querySelectorAll(".template-btn").forEach((btn) => {
   btn.addEventListener("click", () => {
     const basePrompt = btn.textContent;
     // Prepend template to input, preserving existing text
-      input.value = `${basePrompt}: ${input.value}`.trim();
-      input.focus();
+    input.value = `${basePrompt}: ${input.value}`.trim();
+    input.focus();
   });
 });
+
 document.querySelector("form").addEventListener("submit", async (e) => {
   e.preventDefault();
-
-
 
   if (input.value.trim() === "") return;
 
@@ -28,15 +27,19 @@ document.querySelector("form").addEventListener("submit", async (e) => {
 
   try {
     loading.classList.remove("hidden"); // before fetch
-    const res = await fetch("http://localhost:5000/api/gemini", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        message: userMessage,
-        history: messages,
-        context: pageContext,
-      }),
-    });
+    // const res = await fetch("http://localhost:5000/api/gemini", {
+    const res = await fetch(
+      "https://firefox-addon-ai-assistance.onrender.com/api/gemini",
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          message: userMessage,
+          history: messages,
+          context: pageContext,
+        }),
+      }
+    );
     loading.classList.add("hidden"); // after fetch
 
     const data = await res.json();
