@@ -4,17 +4,23 @@ import { GoogleGenerativeAI } from "@google/generative-ai";
 import dotenv from "dotenv";
 dotenv.config();
 
-
 const app = express();
 app.use(cors());
 app.use(express.json());
 
 // console.log(process.env.GEMINI_API_KEY);
 
-const GEMINI_API_KEY =
-  process.env.GEMINI_API_KEY ;
+const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
 
 const genAI = new GoogleGenerativeAI(GEMINI_API_KEY);
+
+app.get("/", (req, res) => {
+  res.json({ message: "This is root of AI Assistant Extension. " });
+});
+
+app.get("/hello", (req, res) => {
+  return res.status(200).json({ message: "Hello world." });
+});
 
 app.post("/api/gemini", async (req, res) => {
   try {
@@ -54,10 +60,9 @@ app.post("/api/gemini", async (req, res) => {
   }
 });
 
-
 app.post("/api/gemini/summarize", async (req, res) => {
   try {
-    const { text } = req.body;   // text = full page text or selection
+    const { text } = req.body; // text = full page text or selection
     if (!text || text.trim().length === 0) {
       return res.status(400).json({ error: "No text provided for summary." });
     }
@@ -74,10 +79,6 @@ app.post("/api/gemini/summarize", async (req, res) => {
   }
 });
 
-
-app.get("/hello", (req, res)=>{
-return res.status(200).json({message: "Hello world."})
-})
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () =>
   console.log(`✅ Server running on http://localhost:${PORT}`)
